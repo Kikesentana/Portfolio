@@ -853,6 +853,20 @@
             .af-nav-copy { font-size: 0.8rem; margin-top: 0; padding-top: 0; }
             .af-nav-list { width: 100%; }
         }
+
+        /* Mientras se hace scroll no hay hover: el contenido pasa bajo un ratón quieto y cada
+           elemento que cruza activaba/desactivaba su :hover con transiciones (= parpadeo). */
+        html.is-scrolling body { pointer-events: none; }
+        html.is-scrolling .proyecto-item,
+        html.is-scrolling .service-item,
+        html.is-scrolling .service-item .name,
+        html.is-scrolling .service-item::after,
+        html.is-scrolling .preview-text,
+        html.is-scrolling .lado-imagen img,
+        html.is-scrolling .tarjeta-inner,
+        html.is-scrolling .miniatura-proyecto img,
+        html.is-scrolling .boton,
+        html.is-scrolling .blog-arrow-btn { transition: none !important; }
     </style>
 </head>
 <body>
@@ -1196,6 +1210,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script>
+        (function() {
+            const root = document.documentElement;
+            let t = null;
+            window.addEventListener("scroll", function() {
+                if (!root.classList.contains("is-scrolling")) root.classList.add("is-scrolling");
+                clearTimeout(t);
+                t = setTimeout(function() { root.classList.remove("is-scrolling"); }, 150);
+            }, { passive: true });
+        })();
+
         function rafThrottle(fn) {
             let ticking = false;
             return function (...args) {
