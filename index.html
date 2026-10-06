@@ -159,7 +159,6 @@
             object-fit: cover;
             object-position: center top;
             filter: brightness(0.8);
-            transition: transform 0.1s ease-out;
             will-change: transform, opacity;
         }
         .bg-overlay {
@@ -450,9 +449,9 @@
         .header-section { height: 30vh; display: flex; align-items: flex-end; padding: 5vw; }
         .cards-container { position: relative; width: 100%; }
         .card-wrapper { position: relative; height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .card { position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: #bfb8b0; visibility: hidden; transform-origin: center center; cursor: pointer; }
+        .card { will-change: transform; backface-visibility: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: #bfb8b0; visibility: hidden; transform-origin: center center; cursor: pointer; }
         
-        .card2 { position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: #0d0d0d; visibility: hidden; transform-origin: center center; cursor: pointer; }
+        .card2 { will-change: transform; backface-visibility: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: #0d0d0d; visibility: hidden; transform-origin: center center; cursor: pointer; }
         
         .card2 img {
             width: 95%; height: 100%; top: 6%; left: 5%; position: absolute; object-fit: cover;
@@ -460,7 +459,7 @@
         }
         .card img { width: 100%; height: 100%; top: 6%; left: 5%; position: absolute; object-fit: cover; }
         
-        .card3 { position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: black; visibility: hidden; transform-origin: center center; cursor: pointer; }
+        .card3 { will-change: transform; backface-visibility: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: black; visibility: hidden; transform-origin: center center; cursor: pointer; }
 .card3 img { width: 95%; height: 100%; top: 6%; left: 5%; position: absolute; object-fit: cover; }
 
         .services { width: 95%; margin: auto; }
@@ -920,7 +919,7 @@
             <h2 class="gigante-titulo">©Sobre mí</h2>
         </div>
         <section class="seccion">
-            <div class="lado-imagen"><img src="img/izbuen.jpg" alt="Publicidad y RRPP" loading="lazy" decoding="async"></div>
+            <div class="lado-imagen"><img src="img/izbuen.jpg" alt="Publicidad y RRPP" loading="eager" decoding="async"></div>
             <div class="lado-contenido">
                 <div class="informacion-superior"><span>+ 2011-2015™</span><span>©Alicante</span></div>
                 <h3 class="titulo">©Publicidad y RR.PP.</h3>
@@ -929,7 +928,7 @@
             </div>
         </section>
         <section class="seccion">
-            <div class="lado-imagen"><img src="img/camara.jpg" alt="Máster TV" loading="lazy" decoding="async"></div>
+            <div class="lado-imagen"><img src="img/camara.jpg" alt="Máster TV" loading="eager" decoding="async"></div>
             <div class="lado-contenido">
                 <div class="informacion-superior"><span>+ 2020-2021™</span><span>©Barcelona</span></div>
                 <h3 class="titulo">©Máster en Programas de TV</h3>
@@ -938,7 +937,7 @@
             </div>
         </section>
         <section class="seccion">
-            <div class="lado-imagen"><img src="img/8.png" alt="Desarrollo web" loading="lazy" decoding="async"></div>
+            <div class="lado-imagen"><img src="img/8.png" alt="Desarrollo web" loading="eager" decoding="async"></div>
             <div class="lado-contenido">
                 <div class="informacion-superior"><span>+ 2026 Ene-Jun™</span><span>©Alicante</span></div>
                 <h3 class="titulo">©Desarrollo web</h3>
@@ -1044,8 +1043,8 @@
         
     </main>
     <div id="imgbox">
-        <div class="img-slot" id="slotA"><img id="imgA" src="" alt="" loading="lazy" decoding="async"></div>
-        <div class="img-slot" id="slotB"><img id="imgB" src="" alt="" loading="lazy" decoding="async"></div>
+        <div class="img-slot" id="slotA"><img id="imgA" src="" alt="" loading="eager" decoding="async"></div>
+        <div class="img-slot" id="slotB"><img id="imgB" src="" alt="" loading="eager" decoding="async"></div>
     </div>
     <div style="height:19vh"></div>
     <section class="services">
@@ -1229,11 +1228,20 @@
                 "img/publicidaddesierto.png",
                 "img/tumba2.png",
                 "img/siesta.png",
-                "img/crudolinea.png"
+                "img/crudolinea.png",
+                "img/izbuen.jpg",
+                "img/camara.jpg",
+                "img/8.png",
+                "img/kikepro.png"
             ];
-            PRELOAD_URLS.forEach(src => {
+            // Se guardan las referencias y se fuerza decode(): si el objeto Image se recoge
+            // por el GC, el navegador descarta la imagen decodificada y reaparece el parpadeo.
+            window.__preloaded = PRELOAD_URLS.map(src => {
                 const preloadImg = new Image();
+                preloadImg.decoding = "async";
                 preloadImg.src = src;
+                if (preloadImg.decode) preloadImg.decode().catch(() => {});
+                return preloadImg;
             });
         })();
 
@@ -1275,14 +1283,20 @@
                 kikito.style.left = left + "px";
                 kikito.style.top  = (rect.top + window.scrollY - 20) + "px";
             }
+            let lastP = -1;
             function onScroll() {
                 const scrollTop = window.scrollY;
-                const p = scrollTop / window.innerHeight;
+                // A partir de p = 2 la imagen ya tiene opacidad 0: no seguimos escalándola
+                // (tras un salto por ancla el scale llegaba a x5-x10 sobre una capa fija enorme).
+                const p = Math.min(scrollTop / window.innerHeight, 2);
+                if (p === lastP) return;
+                lastP = p;
                 mainImage.style.transform = `scale(${1 + p * 0.2})`;
-                mainImage.style.opacity = String(1 - p * 0.5);
-                parallaxTitle.style.transform = `translateY(${scrollTop * 0.4}px)`;
-                parallaxTitle.style.opacity = String(1 - p * 1.2);
-                positionKikito();
+                mainImage.style.opacity = String(Math.max(0, 1 - p * 0.5));
+                const t = Math.min(scrollTop, window.innerHeight * 2);
+                parallaxTitle.style.transform = `translateY(${t * 0.4}px)`;
+                parallaxTitle.style.opacity = String(Math.max(0, 1 - p * 1.2));
+                if (p < 1.5) positionKikito(); // evita forzar layout en cada frame cuando el hero ya no se ve
             }
             window.addEventListener("scroll", rafThrottle(onScroll), { passive: true });
             window.addEventListener("resize", positionKikito);
@@ -1397,6 +1411,8 @@
         (function() {
             gsap.registerPlugin(ScrollTrigger);
             window.addEventListener("load", () => ScrollTrigger.refresh());
+            // Tras un salto por ancla, sincroniza todas las timelines en el mismo frame
+            window.addEventListener("hashchange", () => ScrollTrigger.update());
             gsap.utils.toArray(".card-wrapper").forEach((wrapper) => {
                 const card = wrapper.querySelector(".card, .card2, .card3");
                 const img  = wrapper.querySelector("img");
@@ -1407,13 +1423,12 @@
                         start: "top 90%",
                         end: "bottom top",
                         scrub: true,
-                        onEnter:     () => gsap.set([card, img], { willChange: "transform" }),
-                        onEnterBack: () => gsap.set([card, img], { willChange: "transform" }),
-                        onLeave:     () => gsap.set([card, img], { willChange: "auto" }),
-                        onLeaveBack: () => gsap.set([card, img], { willChange: "auto" })
+                        invalidateOnRefresh: true,
+                        // Visibilidad controlada por estado (no por posición en la timeline):
+                        // tras un salto por ancla solo la card activa existe como capa.
+                        onToggle: (self) => { card.style.visibility = self.isActive ? "visible" : "hidden"; }
                     }
                 });
-                tl.set(card, { autoAlpha: 1, visibility: "visible" });
                 tl.fromTo(card, { y: "100vh", rotationZ: -38, scale: 0.4, borderRadius: "60px", force3D: true }, { y: "0vh", rotationZ: 0, scale: 1, width: "100vw", height: "100vh", borderRadius: "60px", ease: "none", force3D: true })
                   .fromTo(img,  { rotationZ: 58, scale: 1.8, force3D: true }, { rotationZ: 0, scale: 1.2, ease: "none", force3D: true }, "<")
                   .to(card, { y: "-100vh", rotationZ: 38, scale: 0.4, borderRadius: "60px", opacity: 0, ease: "none", force3D: true })
@@ -1588,6 +1603,15 @@
             const clones1 = buildGrid(overlay1, c1, IMG_SRC_1, 42);
             const clones2 = buildGrid(overlay2, c2, IMG_SRC_2, 99);
             let lastVisible1 = 0, lastVisible2 = 0;
+            const applied = { 1: 0, 2: 0 };
+            function applyVisible(clones, key, target) {
+                const from = applied[key];
+                if (from === target) return;
+                const lo = Math.min(from, target), hi = Math.max(from, target);
+                const v = target > from ? '1' : '0';
+                for (let i = lo; i < hi; i++) clones[i].style.opacity = v;
+                applied[key] = target;
+            }
             const HYSTERESIS = 2; // evita que el "cruce" de scroll haga parpadear la imagen del límite
             function onScrollGrid() {
                 const section = document.querySelector('.blog-section');
@@ -1606,8 +1630,8 @@
                 if (rawVisible2 > lastVisible2 || rawVisible2 <= lastVisible2 - HYSTERESIS || rawVisible2 === 0 || rawVisible2 === clones2.length) {
                     lastVisible2 = rawVisible2;
                 }
-                clones1.forEach((el, i) => el.style.opacity = i < lastVisible1 ? '1' : '0');
-                clones2.forEach((el, i) => el.style.opacity = i < lastVisible2 ? '1' : '0');
+                applyVisible(clones1, 1, lastVisible1);
+                applyVisible(clones2, 2, lastVisible2);
             }
             window.addEventListener('scroll', rafThrottle(onScrollGrid), { passive: true });
         })();
