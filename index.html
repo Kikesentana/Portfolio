@@ -462,6 +462,10 @@
         .card3 { will-change: transform; backface-visibility: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: black; visibility: hidden; transform-origin: center center; cursor: pointer; }
 .card3 img { width: 95%; height: 100%; top: 6%; left: 5%; position: absolute; object-fit: cover; }
 
+        /* Card 5: Patri (Reely Lab Content) */
+        .card4 { will-change: transform; backface-visibility: hidden; position: fixed; top: 0; left: 0; right: 0; bottom: 0; margin: auto; width: 70vw; height: 95vh; border-radius: 60px; overflow: hidden; background: #2F2F2F; visibility: hidden; transform-origin: center center; cursor: pointer; }
+        .card4 img { width: 100%; height: 100%; top: 0; left: 0; position: absolute; object-fit: cover; }
+
         .services { width: 95%; margin: auto; }
         #servicios { background-color: #181818; border-radius: 10px; padding-top: 50px; padding-left: 50px; padding-right: 50px; width: 100%; }
         .service-item::after { content: "+"; margin-left: auto; font-size: 28px; font-weight: 400; color: #fff; line-height: 1; opacity: 0.8; flex-shrink: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
@@ -1054,6 +1058,11 @@
                 <img src="img/project5.png" alt="B-Project Audiovisual" loading="eager" decoding="async">
             </div>
         </div>
+        <div class="card-wrapper">
+            <div class="card4" id="patri">
+                <img src="img/patri5.png" alt="Patri - Reely Lab Content" loading="eager" decoding="async">
+            </div>
+        </div>
         
     </main>
     <div id="imgbox">
@@ -1242,7 +1251,7 @@
             // para que ya estén descargadas y decodificadas cuando la animación las necesite,
             // evitando el "pop-in"/flash que se percibe como parpadeo.
             const PRELOAD_URLS = [
-                "img/buena.png", "img/cristina3.png", "img/start2.png", "img/inicip%20escuela%2066.png", "img/project5.png",
+                "img/buena.png", "img/cristina3.png", "img/start2.png", "img/inicip%20escuela%2066.png", "img/project5.png", "img/patriportada.png",
                 "img/pcdesiertogrande.png", "img/instadesierto.png", "img/libretadesierto.png", "img/publicidaddesierto.png", "img/tumba2.png",
                 "img/siesta.png", "img/crudolinea.png", "img/izbuen.jpg", "img/camara.jpg", "img/8.png", "img/kikepro.png",
                 "img/html.png", "img/css.png", "img/js.png",
@@ -1449,7 +1458,7 @@
             // Tras un salto por ancla, sincroniza todas las timelines en el mismo frame
             window.addEventListener("hashchange", () => ScrollTrigger.update());
             gsap.utils.toArray(".card-wrapper").forEach((wrapper) => {
-                const card = wrapper.querySelector(".card, .card2, .card3");
+                const card = wrapper.querySelector(".card, .card2, .card3, .card4");
                 const img  = wrapper.querySelector("img");
                 if (!card || !img) return;
                 const tl = gsap.timeline({
@@ -1579,6 +1588,15 @@
             cardStart.addEventListener("click", function(e) {
                 e.preventDefault(); e.stopPropagation();
                 window.open("https://www.bmovieprojects.com/es/", "_blank", "noopener,noreferrer");
+            });
+        })();
+
+        (function() {
+            const cardPatri = document.getElementById("patri");
+            if (!cardPatri) return;
+            cardPatri.addEventListener("click", function(e) {
+                e.preventDefault(); e.stopPropagation();
+                window.open("https://reelylabcontent.com/", "_blank", "noopener,noreferrer");
             });
         })();
        
